@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
-from django.urls import reverse
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .forms import FileFieldForm
 
@@ -10,10 +10,11 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
 
 
-class FileFildView(LoginRequiredMixin, FormView):
+class FileFildView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = FileFieldForm
     template_name = 'upload.html'
-    success_url = 'success'
+    success_url = '/success/'
+    success_message = 'Upload feito com sucesso!'
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
