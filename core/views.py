@@ -8,11 +8,13 @@ from .forms import FileFieldForm
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
+    login_url = '/accounts/login/'
 
 
 class FileFildView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = FileFieldForm
     template_name = 'upload.html'
+    login_url = '/accounts/login/'
     success_url = '/success/'
     success_message = 'Upload feito com sucesso!'
 

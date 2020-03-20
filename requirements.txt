@@ -1,6 +1,5 @@
 beautifulsoup4==4.8.2
 Django==2.2.11
-django-adminlte2==0.4.1
 django-bootstrap4==1.1.1
 psycopg2-binary==2.8.4
 pytz==2019.3

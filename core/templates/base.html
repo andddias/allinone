@@ -1,21 +1,81 @@
-{% load static %}
-{% load bootstrap4 %}
-<!DOCTYPE html>
-<html lang="pt-br">
+{% load static %}<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Programas</title>
-    {% bootstrap_css %}
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    {% block title_outer %}
+        <title>{% block title %}{{ site.name }}{% endblock %}</title>
+    {% endblock %}
 
+    {% block meta %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% include 'lib/_styles.html' %}
+    {% endblock %}
+
+    {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini {% block body_class %}{% block bodyclass %}{% endblock %}{% endblock %}">
 
-    {% block content %} {% endblock %}
+{% block body %}
+    <div class="wrapper">
+        {% block nav_header %}
+            {% include 'lib/_main_header.html' %}
+        {% endblock %}
 
-    <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
-    {% bootstrap_javascript jquery='full' %}
+        {% block nav_sidebar %}
+            {% include 'lib/_main_sidebar.html' %}
+        {% endblock %}
+
+        {% block content_wrapper %}
+        <div class="content-wrapper">
+            {% block content_header %}
+                <section class="content-header">
+                    {% block no_heading %}
+                        <h1>
+                            {% block page_name %}{% endblock %}
+                            <div class="header-actions">
+                                {% block page_actions %}{% endblock %}
+                            </div>
+                            {% block no_description %}
+                            <small>{% block page_description %}{% endblock %}</small>
+                            {% endblock %}
+                        </h1>
+                        {% block breadcrumbs %}
+                            {# Breadcrumb implementation left to developers #}
+                        {% endblock %}
+                    {% endblock no_heading %}
+                </section>
+            {% endblock %}
+
+            {% block content_outer %}
+            <section class="content">
+                {% block messages %}
+                    {% include 'lib/_messages.html' %}
+                {% endblock %}
+
+                {% block content_block_wrap %}
+                    {% block content %}{% endblock %}
+                {% endblock %}
+            </section>
+            {% endblock %}
+
+        </div>
+        {% endblock content_wrapper %}
+
+        {% block nav_footer %}
+            {% include 'lib/_main_footer.html' %}
+        {% endblock %}
+
+    </div>
+{% endblock body %}
+
+{% block javascript %}
+{% include 'lib/_scripts.html' %}
+{% endblock %}
+
+{% block extra_foot %}{% endblock %}
 </body>
 </html>
