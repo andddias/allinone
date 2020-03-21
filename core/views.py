@@ -15,7 +15,7 @@ class FileFildView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = FileFieldForm
     template_name = 'upload.html'
     login_url = '/accounts/login/'
-    success_url = '/success/'
+    success_url = '/upload/'
     success_message = 'Upload feito com sucesso!'
 
     def post(self, request, *args, **kwargs):
