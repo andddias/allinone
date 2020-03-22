@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic.edit import FormView
@@ -17,9 +18,10 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
 def upload(request):
     if request.method == 'POST':
-        uploaded_file = request.FILES['file']
-        print(uploaded_file.name)
-        print(uploaded_file.size)
+        uploaded_file = request.FILES['arquivo']
+        # instanciando FileSystemStorage
+        fs = FileSystemStorage()
+        fs.save(uploaded_file.name, uploaded_file)
     return render(request, 'upload.html')
 
 
