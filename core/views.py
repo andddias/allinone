@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView, CreateView
+from django.urls import reverse_lazy
+
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -48,6 +50,25 @@ def upload_livro(request):
         'form': form,
     }
     return render(request, 'upload_livro.html', context)
+
+
+class LivroListView(ListView):
+    model = Livro
+    template_name = 'class_livro_lista.html'
+    context_object_name = 'livros'
+
+
+class UploadLivroView(CreateView):
+    model = Livro
+    template_name = 'upload_livro.html'
+
+    # forma correta
+    form_class = LivroForm
+    # ou
+    # fields = ('titulo', 'autor', 'pdf', 'capa')
+
+    success_url = reverse_lazy('class_livro_lista')
+
 
 """
 class MyModelView(FormView):
