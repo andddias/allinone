@@ -17,12 +17,14 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
 
 def upload(request):
+    context = {}
     if request.method == 'POST':
         uploaded_file = request.FILES['arquivo']
         # instanciando FileSystemStorage
         fs = FileSystemStorage()
         fs.save(uploaded_file.name, uploaded_file)
-    return render(request, 'upload.html')
+        context['url'] = fs.url(uploaded_file.name)
+    return render(request, 'upload.html', context)
 
 
 
