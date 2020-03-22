@@ -52,6 +52,13 @@ def upload_livro(request):
     return render(request, 'upload_livro.html', context)
 
 
+def delete_livro(request, pk):
+    if request.method == 'POST':
+        livro = Livro.objects.get(pk=pk)
+        livro.delete()
+    return redirect('livro_lista')
+
+
 class LivroListView(ListView):
     model = Livro
     template_name = 'class_livro_lista.html'
