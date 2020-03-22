@@ -40,161 +40,167 @@ lista_final = []
 linhas_arquivo = None
 pasta = 'import'
 # pasta = input('Digite o local dos arquivos: ')
-lista_de_arquivos = os.listdir(pasta)
-for arquivo_cnab in lista_de_arquivos:
-    with open(f'{pasta}/{arquivo_cnab}') as arquivo:
-        primeira_linha = arquivo.readline()
+# lista_de_arquivos = os.listdir(pasta)
 
-        # testando primeira linha para saber se banco e convenio estão cadastrados, caso estejam o
-        # restante do arquivo será importado, caso não os sistema informa os dados não cadastrados
-        if banco == primeira_linha[pst_banco[0]:pst_banco[1]] \
-                and (convenio_oab_rn == primeira_linha[pst_convenio[0]:pst_convenio[1]]
-                     or convenio_oab_rr == primeira_linha[pst_convenio[0]:pst_convenio[1]]):
 
-            # colocando cursor no inicio do arquivo
-            arquivo.seek(0)
-            linhas_arquivo = arquivo.readlines()
+def lista_dados(lista_de_arquivos):
+    for arquivo_cnab in lista_de_arquivos:
+        with open(arquivo_cnab) as file:
+            primeira_linha = file.readline()
 
-        elif banco == primeira_linha[pst_banco[0]:pst_banco[1]] \
-                and (not (convenio_oab_rn == primeira_linha[pst_convenio[0]:pst_convenio[1]]
-                          or convenio_oab_rr == primeira_linha[pst_convenio[0]:pst_convenio[1]])):
-            print(f'Banco cadastrado, mas o convenio {primeira_linha[pst_convenio[0]:pst_convenio[1]]}'
-                  f' não está cadastrado.')
-        else:
-            print(f'O Banco "{primeira_linha[pst_banco[0]:pst_banco[1]]}"'
-                  f' e o convenio "{primeira_linha[pst_convenio[0]:pst_convenio[1]]}" não está cadastrado.')
+            # testando primeira linha para saber se banco e convenio estão cadastrados, caso estejam o
+            # restante do arquivo será importado, caso não os sistema informa os dados não cadastrados
+            if banco == primeira_linha[pst_banco[0]:pst_banco[1]] \
+                    and (convenio_oab_rn == primeira_linha[pst_convenio[0]:pst_convenio[1]]
+                         or convenio_oab_rr == primeira_linha[pst_convenio[0]:pst_convenio[1]]):
 
-    if linhas_arquivo is not None:
-        titulos_validos = []
-        # Montagem de lista com todos os seguimentos Y que contenham as contas cadastradas
-        for idx, linha in enumerate(linhas_arquivo):
-            if linhas_arquivo[idx][pst_tipo[0]:pst_tipo[1]] == tipo_pagamento \
-                    and linhas_arquivo[idx][pst_seguimento[0]:pst_seguimento[1]] == seguimento_y:
-                # and ((linhas_arquivo[idx][pst_conta_recebimento[0]:pst_conta_recebimento[1]] == conta_cfoab)
-                #     or (linhas_arquivo[idx][pst_conta_recebimento[0]:pst_conta_recebimento[1]] == conta_fida)):
-                conta_recebimento = linhas_arquivo[idx][pst_conta_recebimento[0]:pst_conta_recebimento[1]]
-                nosso_numero_y = linhas_arquivo[idx][pst_numero_boleto_seg_y[0]:pst_numero_boleto_seg_y[1]]
-                percentual = (Decimal(linhas_arquivo[idx][pst_percentual[0]:pst_percentual[1]])) / 100
+                # colocando cursor no inicio do arquivo
+                file.seek(0)
+                linhas_file = file.readlines()
 
-                # Teste para verificar se é a ultima rateio do bloco de seguimento y
-                if linhas_arquivo[idx + 1][pst_seguimento[0]:pst_seguimento[1]] == seguimento_t:
-                    ultimo_rateio = True
-                else:
-                    ultimo_rateio = False
+            elif banco == primeira_linha[pst_banco[0]:pst_banco[1]] \
+                    and (not (convenio_oab_rn == primeira_linha[pst_convenio[0]:pst_convenio[1]]
+                              or convenio_oab_rr == primeira_linha[pst_convenio[0]:pst_convenio[1]])):
+                print(f'Banco cadastrado, mas o convenio {primeira_linha[pst_convenio[0]:pst_convenio[1]]}'
+                      f' não está cadastrado.')
+            else:
+                print(f'O Banco "{primeira_linha[pst_banco[0]:pst_banco[1]]}"'
+                      f' e o convenio "{primeira_linha[pst_convenio[0]:pst_convenio[1]]}" não está cadastrado.')
 
-                # Teste para criação variavel seccional
-                if convenio_oab_rn == primeira_linha[pst_convenio[0]:pst_convenio[1]]:
-                    seccional = seccional_oab_rn
-                elif convenio_oab_rr == primeira_linha[pst_convenio[0]:pst_convenio[1]]:
-                    seccional = seccional_oab_rr
+        if linhas_file is not None:
+            titulos_validos = []
+            # Montagem de lista com todos os seguimentos Y que contenham as contas cadastradas
+            for idx, linha in enumerate(linhas_file):
+                if linhas_file[idx][pst_tipo[0]:pst_tipo[1]] == tipo_pagamento \
+                        and linhas_file[idx][pst_seguimento[0]:pst_seguimento[1]] == seguimento_y:
+                    # and ((linhas_file[idx][pst_conta_recebimento[0]:pst_conta_recebimento[1]] == conta_cfoab)
+                    #     or (linhas_file[idx][pst_conta_recebimento[0]:pst_conta_recebimento[1]] == conta_fida)):
+                    conta_recebimento = linhas_file[idx][pst_conta_recebimento[0]:pst_conta_recebimento[1]]
+                    nosso_numero_y = linhas_file[idx][pst_numero_boleto_seg_y[0]:pst_numero_boleto_seg_y[1]]
+                    percentual = (Decimal(linhas_file[idx][pst_percentual[0]:pst_percentual[1]])) / 100
 
-                item = {'conta': conta_recebimento, 'numero': nosso_numero_y, 'valor': 0,
-                        'percentual': percentual, 'data': 'data_credito', 'seccional': seccional,
-                        'ultimo_rateio': ultimo_rateio}
-                titulos_validos.append(item)
+                    # Teste para verificar se é a ultima rateio do bloco de seguimento y
+                    if linhas_file[idx + 1][pst_seguimento[0]:pst_seguimento[1]] == seguimento_t:
+                        ultimo_rateio = True
+                    else:
+                        ultimo_rateio = False
 
-        # Criando dicionario idexado pelo nosso numero com dados de valor e data de credito
-        dicionario_titulos_tipo_06 = {}
-        for idx, linha in enumerate(linhas_arquivo):
-            if linhas_arquivo[idx][pst_tipo[0]:pst_tipo[1]] == tipo_pagamento \
-                    and linhas_arquivo[idx][pst_seguimento[0]:pst_seguimento[1]] == seguimento_t:
-                nosso_numero_t = linhas_arquivo[idx][pst_numero_boleto_seg_t[0]:pst_numero_boleto_seg_t[1]]
-                valor = Decimal(linhas_arquivo[idx + 1][pst_valor[0]:pst_valor[1]]) / 100
-                data_credito = linhas_arquivo[idx + 1][pst_data_credito[0]:pst_data_credito[1]]
-                # Formatando data de credito
-                data_credito = data_credito[0:2] + '/' + data_credito[2:4] + '/' + data_credito[4:8]
-                item = {'valor': valor, 'data': data_credito}
-                dicionario_titulos_tipo_06[nosso_numero_t] = item
+                    # Teste para criação variavel seccional
+                    if convenio_oab_rn == primeira_linha[pst_convenio[0]:pst_convenio[1]]:
+                        regional = seccional_oab_rn
+                    elif convenio_oab_rr == primeira_linha[pst_convenio[0]:pst_convenio[1]]:
+                        regional = seccional_oab_rr
 
-        # Calculando valor de rateio e inserindo os valores de data, valor titulo e valor rateio
-        # nos respectivos nosso numero na lista titulos_validos
-        for idx, linha in enumerate(titulos_validos):
-            if titulos_validos[idx].get('numero') in dicionario_titulos_tipo_06:
-                titulos_validos[idx]['data'] = dicionario_titulos_tipo_06[titulos_validos[idx].get('numero')].get('data')
-                valor = dicionario_titulos_tipo_06[titulos_validos[idx].get('numero')].get('valor')
-                percentual = titulos_validos[idx].get('percentual')
-                valor_calculado = apenas_duas_casas_decimais(valor * percentual)
-                # Adicionado valores na lista
-                titulos_validos[idx]['valor'] = valor
-                titulos_validos[idx]['valor_calculado'] = valor_calculado
+                    elemento = {'conta': conta_recebimento, 'numero': nosso_numero_y, 'valor': 0,
+                                'percentual': percentual, 'data': 'data_credito', 'seccional': regional,
+                                'ultimo_rateio': ultimo_rateio}
+                    titulos_validos.append(elemento)
 
-                # verificando resto arredondamento
-                if titulos_validos[idx].get('ultimo_rateio'):
-                    # Criação e preenchimento de lista para calculo diferença de rateio
-                    lista_diferenca_rateio = {'soma_percentual': 0, 'soma_rateio': 0, 'vr_titulo': 0}
-                    for i, l in enumerate(titulos_validos):
-                        if titulos_validos[idx].get('numero') == titulos_validos[i].get('numero'):
-                            lista_diferenca_rateio['soma_percentual'] += titulos_validos[i].get('percentual')
-                            lista_diferenca_rateio['soma_rateio'] += titulos_validos[i].get('valor_calculado')
-                            lista_diferenca_rateio['vr_titulo'] = titulos_validos[i].get('valor')
-                    # Calculado diferença de rateio a partir da lista de soma
-                    vr_rateio = lista_diferenca_rateio['soma_percentual'] * lista_diferenca_rateio['vr_titulo']
-                    vr_rateio = apenas_duas_casas_decimais(vr_rateio)
-                    soma_rateio = apenas_duas_casas_decimais(lista_diferenca_rateio['soma_rateio'])
-                    # arredondamento desativado, somente assim funcionou corretamente até agora.
-                    # diferenca_rateio = apenas_duas_casas_decimais(vr_rateio - soma_rateio)
-                    diferenca_rateio = vr_rateio - soma_rateio
-                    # Adicionando diferença na lista de titulos validos no item marcado como True para ultimo rateio
-                    titulos_validos[idx]['diferenca_rateio'] = diferenca_rateio
-                else:
-                    titulos_validos[idx]['diferenca_rateio'] = 0
+            # Criando dicionario idexado pelo nosso numero com dados de valor e data de credito
+            dicionario_titulos_tipo_06 = {}
+            for idx, linha in enumerate(linhas_file):
+                if linhas_file[idx][pst_tipo[0]:pst_tipo[1]] == tipo_pagamento \
+                        and linhas_file[idx][pst_seguimento[0]:pst_seguimento[1]] == seguimento_t:
+                    nosso_numero_t = linhas_file[idx][pst_numero_boleto_seg_t[0]:pst_numero_boleto_seg_t[1]]
+                    vr = Decimal(linhas_file[idx + 1][pst_valor[0]:pst_valor[1]]) / 100
+                    data_credito = linhas_file[idx + 1][pst_data_credito[0]:pst_data_credito[1]]
+                    # Formatando data de credito
+                    data_credito = data_credito[0:2] + '/' + data_credito[2:4] + '/' + data_credito[4:8]
+                    elemento = {'valor': vr, 'data': data_credito}
+                    dicionario_titulos_tipo_06[nosso_numero_t] = elemento
 
-            # impressao de cada dado coletado
-            # print(f'indice: {idx}, linha: {linha}')
+            # Calculando valor de rateio e inserindo os valores de data, valor titulo e valor rateio
+            # nos respectivos nosso numero na lista titulos_validos
+            for idx, linha in enumerate(titulos_validos):
+                if titulos_validos[idx].get('numero') in dicionario_titulos_tipo_06:
+                    titulos_validos[idx]['data'] = dicionario_titulos_tipo_06[titulos_validos[idx].get('numero')].get('data')
+                    vr = dicionario_titulos_tipo_06[titulos_validos[idx].get('numero')].get('valor')
+                    percentual = titulos_validos[idx].get('percentual')
+                    valor_calculado = apenas_duas_casas_decimais(vr * percentual)
+                    # Adicionado valores na lista
+                    titulos_validos[idx]['valor'] = vr
+                    titulos_validos[idx]['valor_calculado'] = valor_calculado
 
-        dicionario_soma_cfoab = {}
-        dicionario_soma_fida = {}
+                    # verificando resto arredondamento
+                    if titulos_validos[idx].get('ultimo_rateio'):
+                        # Criação e preenchimento de lista para calculo diferença de rateio
+                        lista_diferenca_rateio = {'soma_percentual': 0, 'soma_rateio': 0, 'vr_titulo': 0}
+                        for i, l in enumerate(titulos_validos):
+                            if titulos_validos[idx].get('numero') == titulos_validos[i].get('numero'):
+                                lista_diferenca_rateio['soma_percentual'] += titulos_validos[i].get('percentual')
+                                lista_diferenca_rateio['soma_rateio'] += titulos_validos[i].get('valor_calculado')
+                                lista_diferenca_rateio['vr_titulo'] = titulos_validos[i].get('valor')
+                        # Calculado diferença de rateio a partir da lista de soma
+                        vr_rateio = lista_diferenca_rateio['soma_percentual'] * lista_diferenca_rateio['vr_titulo']
+                        vr_rateio = apenas_duas_casas_decimais(vr_rateio)
+                        soma_rateio = apenas_duas_casas_decimais(lista_diferenca_rateio['soma_rateio'])
+                        # arredondamento desativado, somente assim funcionou corretamente até agora.
+                        # diferenca_rateio = apenas_duas_casas_decimais(vr_rateio - soma_rateio)
+                        diferenca_rateio = vr_rateio - soma_rateio
+                        # Adicionando diferença na lista de titulos validos no item marcado como True para ultimo rateio
+                        titulos_validos[idx]['diferenca_rateio'] = diferenca_rateio
+                    else:
+                        titulos_validos[idx]['diferenca_rateio'] = 0
 
-        for idx, linha in enumerate(titulos_validos):
-            if titulos_validos[idx].get('conta') == conta_cfoab and len(dicionario_soma_cfoab) == 0:
-                valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
-                data_credito = titulos_validos[idx].get('data')
-                seccional = titulos_validos[idx].get('seccional')
-                chave_dicionario = (seccional, data_credito)
-                dicionario_soma_cfoab[chave_dicionario] = valor_calculado
+                # impressao de cada dado coletado
+                # print(f'indice: {idx}, linha: {linha}')
 
-            elif titulos_validos[idx].get('conta') == conta_cfoab and len(dicionario_soma_cfoab) > 0:
-                valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
-                data_credito = titulos_validos[idx].get('data')
-                seccional = titulos_validos[idx].get('seccional')
-                chave_dicionario = (seccional, data_credito)
-                valor_soma = dicionario_soma_cfoab[chave_dicionario] + valor_calculado
-                dicionario_soma_cfoab[chave_dicionario] = valor_soma
+            dicionario_soma_cfoab = {}
+            dicionario_soma_fida = {}
 
-            elif titulos_validos[idx].get('conta') == conta_fida and len(dicionario_soma_fida) == 0:
-                valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
-                data_credito = titulos_validos[idx].get('data')
-                seccional = titulos_validos[idx].get('seccional')
-                chave_dicionario = (seccional, data_credito)
-                dicionario_soma_fida[chave_dicionario] = valor_calculado
+            for idx, linha in enumerate(titulos_validos):
+                if titulos_validos[idx].get('conta') == conta_cfoab and len(dicionario_soma_cfoab) == 0:
+                    valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
+                    data_credito = titulos_validos[idx].get('data')
+                    regional = titulos_validos[idx].get('seccional')
+                    chave_dicionario = (regional, data_credito)
+                    dicionario_soma_cfoab[chave_dicionario] = valor_calculado
 
-            elif titulos_validos[idx].get('conta') == conta_fida and len(dicionario_soma_fida) > 0:
-                valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
-                data_credito = titulos_validos[idx].get('data')
-                seccional = titulos_validos[idx].get('seccional')
-                chave_dicionario = (seccional, data_credito)
-                valor_soma = dicionario_soma_fida[chave_dicionario] + valor_calculado
-                dicionario_soma_fida[chave_dicionario] = valor_soma
+                elif titulos_validos[idx].get('conta') == conta_cfoab and len(dicionario_soma_cfoab) > 0:
+                    valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
+                    data_credito = titulos_validos[idx].get('data')
+                    regional = titulos_validos[idx].get('seccional')
+                    chave_dicionario = (regional, data_credito)
+                    valor_soma = dicionario_soma_cfoab[chave_dicionario] + valor_calculado
+                    dicionario_soma_cfoab[chave_dicionario] = valor_soma
 
-        for chave, valor in dicionario_soma_cfoab.items():
-            result1, result2 = chave
-            # O valor final está sendo arredondado em 2 casa decimais
-            result3 = valor
-            tupla_resultados_finais = ('CFOAB', result2, result1, result3)
-            lista_final.append(tupla_resultados_finais)
-            # prin(tupla_resultados_finais)
-            # print(f'CFOAB - {chave} - Valor R$ {valor:.2f} ')
+                elif titulos_validos[idx].get('conta') == conta_fida and len(dicionario_soma_fida) == 0:
+                    valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
+                    data_credito = titulos_validos[idx].get('data')
+                    regional = titulos_validos[idx].get('seccional')
+                    chave_dicionario = (regional, data_credito)
+                    dicionario_soma_fida[chave_dicionario] = valor_calculado
 
-        for chave, valor in dicionario_soma_fida.items():
-            result1, result2 = chave
-            # O valor final está sendo arredondado em 2 casa decimais
-            result3 = valor
-            tupla_resultados_finais = ('FIDA', result2, result1, result3)
-            lista_final.append(tupla_resultados_finais)
-            # print(tupla_resultados_finais)
-            # print(f' FIDA - {chave} - Valor R$ {valor:.2f} ')
+                elif titulos_validos[idx].get('conta') == conta_fida and len(dicionario_soma_fida) > 0:
+                    valor_calculado = titulos_validos[idx].get('valor_calculado') + titulos_validos[idx].get('diferenca_rateio')
+                    data_credito = titulos_validos[idx].get('data')
+                    regional = titulos_validos[idx].get('seccional')
+                    chave_dicionario = (regional, data_credito)
+                    valor_soma = dicionario_soma_fida[chave_dicionario] + valor_calculado
+                    dicionario_soma_fida[chave_dicionario] = valor_soma
+
+            for chave, vr in dicionario_soma_cfoab.items():
+                result1, result2 = chave
+                # O valor final está sendo arredondado em 2 casa decimais
+                result3 = vr
+                tupla_resultados_finais = ('CFOAB', result2, result1, result3)
+                lista_final.append(tupla_resultados_finais)
+                # prin(tupla_resultados_finais)
+                # print(f'CFOAB - {chave} - Valor R$ {vr:.2f} ')
+
+            for chave, vr in dicionario_soma_fida.items():
+                result1, result2 = chave
+                # O valor final está sendo arredondado em 2 casa decimais
+                result3 = vr
+                tupla_resultados_finais = ('FIDA', result2, result1, result3)
+                lista_final.append(tupla_resultados_finais)
+                # print(tupla_resultados_finais)
+                # print(f' FIDA - {chave} - Valor R$ {vr:.2f} ')
+    return lista_final
+
 
 # print(lista_final)
+"""
 arquivo = 'retorno/tabela.csv'
 with open(arquivo, 'w', newline='') as arquivo_csv:
     escritor = csv.writer(arquivo_csv, delimiter=';')
@@ -253,6 +259,7 @@ for conta, data, seccional, valor in lista_final:
         valor = str(valor)
         dados = (data, valor)
         lista_titulos_convenio7927_fida.append(dados)
+"""
 
 
 def criar_arquivo_cnab(nome_seccional, convenio, data_inicial, data_final, lista_dados):
@@ -288,7 +295,7 @@ def criar_arquivo_cnab(nome_seccional, convenio, data_inicial, data_final, lista
                       '                                                                                           '
                       '                                                          ')
 
-
+"""
 if len(lista_titulos_convenio5146_cfoab) > 0:
     nome = 'OABRR'
     cod = '5146'
@@ -322,3 +329,4 @@ if len(lista_titulos_convenio7927_fida) > 0:
     print(lista_titulos_convenio7927_fida)
 
 print(f'O arquivo retorno com os dados dos arquivos foi criado no seguinte local: {arquivo}')
+"""
