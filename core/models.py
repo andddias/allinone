@@ -8,10 +8,14 @@ class Livro(models.Model):
     pdf = models.FileField(upload_to='livros/pdfs/')
     capa = models.ImageField(upload_to='livros/capas/', null=True, blank=True)
 
-
     class Meta:
         verbose_name = 'Livro'
         verbose_name_plural = 'Livros'
 
     def __str__(self):
         return self.titulo
+
+    def delete(self, *args, **kwargs):
+        self.pdf.delete()
+        self.capa.delete()
+        super().delete(*args, **kwargs)
