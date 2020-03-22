@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Livros</h2>
+
+    <p>
+        <a href="{% url 'upload_livro' %}" class="btn btn-primary">Upload Livro</a>
+    </p>
+
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+                <tr>
+                    <td>{{ livro.titulo }}</td>
+                    <td>{{ livro.autor }}</td>
+                    <td>
+                        <a href="{{ livro.pdf.url }}" class="btn btn-primary btn-sm" target="_blank">Download PDF</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

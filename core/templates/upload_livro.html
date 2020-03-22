@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Upload Livros</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!--.as_p formatação para separar os campos em paragrafos-->
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Upload Livro</button>
+    </form>
+
+
+{% endblock %}

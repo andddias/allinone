@@ -1,13 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from .forms import LivroForm
+from .models import Livro
+
 from django.views.generic.edit import FormView
 from django.contrib.messages.views import SuccessMessageMixin
 
-from .forms import FileFieldForm, MyModelForm
-from .models import MyModel
 from .cnab_bradesco import lista_dados
 
 
@@ -27,7 +28,26 @@ def upload(request):
     return render(request, 'upload.html', context)
 
 
+def livro_lista(request):
+    livros = Livro.objects.all()
+    context = {
+        'livros': livros
+    }
+    return render(request, 'livro_lista.html', context)
 
+
+def upload_livro(request):
+    if request.method == 'POST':
+        form = LivroForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('livro_lista')
+    else:
+        form = LivroForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'upload_livro.html', context)
 
 """
 class MyModelView(FormView):
