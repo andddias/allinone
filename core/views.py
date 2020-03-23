@@ -1,15 +1,13 @@
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView, CreateView
 from django.urls import reverse_lazy
-
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import LivroForm
-from .models import Livro
-
-from django.views.generic.edit import FormView
-from django.contrib.messages.views import SuccessMessageMixin
+from .forms import LivroForm, ArquivoForm
+from .models import Livro, Arquivo, DataUpload
 
 from .cnab_bradesco import lista_dados
 
@@ -77,46 +75,21 @@ class UploadLivroView(CreateView):
     success_url = reverse_lazy('class_livro_lista')
 
 
-"""
-class MyModelView(FormView):
-    form_class = MyModelForm
+class UploadArquivoView(LoginRequiredMixin, CreateView):
     template_name = 'upload.html'
-    #login_url = '/accounts/login/'
-    success_url = '/upload/'
-    #success_message = 'Upload feito com sucesso!'
+    form_class = ArquivoForm
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        files = request.FILES.getlist('file_field')
+        arquivos = request.FILES.getlist('arquivos')
         if form.is_valid():
-            for f in files:
-                print(f)
-            # dados = lista_dados(files)
-            print(type(files))
-            print(files)
-            return self.form_valid(form)
+            data_upload_instancia = DataUpload()
+            data_upload_instancia.save()
+            for arq in arquivos:
+                arquivo_instancia = Arquivo(data_upload=data_upload_instancia, arquivos=arq)
+                arquivo_instancia.save()
+            messages.success(self.request, message='Upload feito com sucesso!')
+            return HttpResponseRedirect('/upload/')
         else:
             return self.form_invalid(form)
-
-
-class FileFildView(LoginRequiredMixin, SuccessMessageMixin, FormView):
-    form_class = FileFieldForm
-    template_name = 'upload.html'
-    login_url = '/accounts/login/'
-    success_url = '/upload/'
-    success_message = 'Upload feito com sucesso!'
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        files = request.FILES.getlist('file_field')
-        if form.is_valid():
-            for f in files:
-                print(type(f))
-            # dados = lista_dados(files)
-            print(type(files))
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-"""

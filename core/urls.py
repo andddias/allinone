@@ -4,7 +4,7 @@ from core import views
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.IndexView.as_view(), name='index'),
-    path('upload/', views.upload, name='upload'),
+    path('upload/', views.UploadArquivoView.as_view(), name='upload'),
     path('livros/', views.livro_lista, name='livro_lista'),
     path('livros/upload/', views.upload_livro, name='upload_livro'),
     path('livros/<int:pk>/', views.delete_livro, name='delete_livro'),

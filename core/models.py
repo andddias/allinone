@@ -1,6 +1,18 @@
 from django.db import models
 
 
+class DataUpload(models.Model):
+    data_upload = models.DateField('Data Upload', auto_now_add=True)
+
+    def __str__(self):
+        return str(self.data_upload)
+
+
+class Arquivo(models.Model):
+    arquivos = models.FileField(upload_to='arquivos/')
+    data_upload = models.ForeignKey(DataUpload, on_delete=models.CASCADE, null=True)
+
+
 # Exemplo de Model gravando no banco de dados link do arquivo permitira CRUD
 class Livro(models.Model):
     titulo = models.CharField(max_length=100)
