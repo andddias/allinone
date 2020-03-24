@@ -84,16 +84,37 @@ class UploadArquivoView(LoginRequiredMixin, CreateView):
         form = self.get_form(form_class)
         arquivos = request.FILES.getlist('arquivo')
         if form.is_valid():
-            #data_upload_instancia = DataUpload()
-            #data_upload_instancia.save()
             for arq in arquivos:
                 arquivo_instancia = Arquivo(arquivo=arq)
                 arquivo_instancia.save()
-
-
-            #lista = lista_dados(arquivos)
-            #print(lista)
             messages.success(self.request, message='Upload feito com sucesso!')
-            return HttpResponseRedirect('/upload/')
+            return HttpResponseRedirect('/arquivos/')
         else:
             return self.form_invalid(form)
+
+
+class ArquivoListView(ListView):
+    model = Arquivo
+    template_name = 'arquivo_lista.html'
+    context_object_name = 'arquivos'
+
+
+def arquivo_lista_last(request):
+    data = Arquivo.objects.last().data_upload
+    arquivos = Arquivo.objects.filter(data_upload=data)
+
+    endereco_arq = []
+    for arq in arquivos:
+        endereco_arq.append(arq.arquivo)
+
+    context = {
+        'arquivos': arquivos
+    }
+    return render(request, 'arquivo_lista_last.html', context)
+
+
+def delete_arquivo(request, pk):
+    if request.method == 'POST':
+        arquivo = Arquivo.objects.get(pk=pk)
+        arquivo.delete()
+    return redirect('arquivo_lista_last')

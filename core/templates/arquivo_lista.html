@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% block content_cabecalho %}
+        <h2>Listagem todos Arquivos enviados</h2>
+        <p>
+            <a href="{% url 'upload' %}" class="btn btn-primary">Upload Arquivos</a>
+        </p>
+    {% endblock %}
+
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Arquivo</th>
+                <th>Download</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for arquivo in arquivos %}
+                <tr>
+                    <td>{{ arquivo.data_upload }}</td>
+                    <td>{{ arquivo.arquivo }}</td>
+                    <td>
+                        <a href="{{ arquivo.arquivo.url }}" class="btn btn-primary btn-sm" target="_blank">Download</a>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'delete_arquivo' arquivo.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

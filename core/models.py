@@ -8,6 +8,10 @@ class Arquivo(models.Model):
     def __str__(self):
         return str(self.arquivo)
 
+    def delete(self, *args, **kwargs):
+        self.arquivo.delete()
+        super().delete(*args, **kwargs)
+
 
 # Exemplo de Model gravando no banco de dados link do arquivo permitira CRUD
 class Livro(models.Model):
