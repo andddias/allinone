@@ -1,16 +1,12 @@
 from django.db import models
 
 
-class DataUpload(models.Model):
+class Arquivo(models.Model):
     data_upload = models.DateField('Data Upload', auto_now_add=True)
+    arquivo = models.FileField(upload_to='arquivos/')
 
     def __str__(self):
-        return str(self.data_upload)
-
-
-class Arquivo(models.Model):
-    arquivos = models.FileField(upload_to='arquivos/')
-    data_upload = models.ForeignKey(DataUpload, on_delete=models.CASCADE, null=True)
+        return str(self.arquivo)
 
 
 # Exemplo de Model gravando no banco de dados link do arquivo permitira CRUD

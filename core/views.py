@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import LivroForm, ArquivoForm
-from .models import Livro, Arquivo, DataUpload
+from .models import Livro, Arquivo
 
 from .cnab_bradesco import lista_dados
 
@@ -82,13 +82,17 @@ class UploadArquivoView(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        arquivos = request.FILES.getlist('arquivos')
+        arquivos = request.FILES.getlist('arquivo')
         if form.is_valid():
-            data_upload_instancia = DataUpload()
-            data_upload_instancia.save()
+            #data_upload_instancia = DataUpload()
+            #data_upload_instancia.save()
             for arq in arquivos:
-                arquivo_instancia = Arquivo(data_upload=data_upload_instancia, arquivos=arq)
+                arquivo_instancia = Arquivo(arquivo=arq)
                 arquivo_instancia.save()
+
+
+            #lista = lista_dados(arquivos)
+            #print(lista)
             messages.success(self.request, message='Upload feito com sucesso!')
             return HttpResponseRedirect('/upload/')
         else:
