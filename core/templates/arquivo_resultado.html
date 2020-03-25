@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% block content_cabecalho %}
+        <h1>CNAB Bradesco</h1>
+        <h2>Resultado dos Arquivos Processados</h2>
+    {% endblock %}
+
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Arquivo</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if tabela_csv %}
+                <tr>
+                    <td>{{ tabela_csv }}</td>
+                    <td>
+                        <a href="{{ tabela_csv }}" class="btn btn-primary btn-sm" target="_blank">Download</a>
+                    </td>
+                </tr>
+            {% endif %}
+            {% for arquivo in lista_cnab %}
+                <tr>
+                    <td>{{ arquivo }}</td>
+                    <td>
+                        <a href="{{ arquivo }}" class="btn btn-primary btn-sm" target="_blank">Download</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% block btn_processar %}
+    {% endblock %}
+{% endblock %}

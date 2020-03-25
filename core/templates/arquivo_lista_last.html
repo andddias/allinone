@@ -1,8 +1,15 @@
 {% extends 'arquivo_lista.html' %}
 
     {% block content_cabecalho %}
+        <h1>CNAB Bradesco</h1>
         <h2>Listagem últimos Arquivos enviados</h2>
         <p>
             <a href="{% url 'upload' %}" class="btn btn-primary">Upload Arquivos</a>
+        </p>
+    {% endblock %}
+
+    {% block btn_processar %}
+        <p>
+            <a href="{% url 'resultado' %}" class="btn btn-danger btn-sm">Processar</a>
         </p>
     {% endblock %}

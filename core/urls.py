@@ -8,6 +8,7 @@ urlpatterns = [
     path('arquivos/', views.arquivo_lista_last, name='arquivo_lista_last'),
     path('arquivos/all', views.ArquivoListView.as_view(), name='arquivo_lista'),
     path('arquivos/<int:pk>/', views.delete_arquivo, name='delete_arquivo'),
+    path('arquivos/resultado/', views.processamento_arquivo, name='resultado'),
     path('livros/', views.livro_lista, name='livro_lista'),
     path('livros/upload/', views.upload_livro, name='upload_livro'),
     path('livros/<int:pk>/', views.delete_livro, name='delete_livro'),

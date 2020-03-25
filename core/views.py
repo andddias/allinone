@@ -1,3 +1,4 @@
+from allinone.settings import BASE_DIR
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -9,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import LivroForm, ArquivoForm
 from .models import Livro, Arquivo
 
-from .cnab_bradesco import lista_dados
+from .cnab_bradesco import lista_dados, tabela_dados_csv, filtra_geracao_cnab
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -102,15 +103,33 @@ class ArquivoListView(ListView):
 def arquivo_lista_last(request):
     data = Arquivo.objects.last().data_upload
     arquivos = Arquivo.objects.filter(data_upload=data)
+    context = {
+        'arquivos': arquivos,
+    }
+    return render(request, 'arquivo_lista_last.html', context)
+
+
+def processamento_arquivo(request):
+    data = Arquivo.objects.last().data_upload
+    arquivos = Arquivo.objects.filter(data_upload=data)
 
     endereco_arq = []
     for arq in arquivos:
-        endereco_arq.append(arq.arquivo)
+        endereco_arq.append(BASE_DIR + arq.arquivo.url)
+
+    lista = lista_dados(endereco_arq)
+    tabela_csv = tabela_dados_csv(lista)
+    lista_arq_cnab = filtra_geracao_cnab()
+
+    print(lista)
+    print(tabela_csv)
+    print(lista_arq_cnab)
 
     context = {
-        'arquivos': arquivos
+        'tabela_csv': tabela_csv,
+        'lista_cnab': lista_arq_cnab,
     }
-    return render(request, 'arquivo_lista_last.html', context)
+    return render(request, 'arquivo_resultado.html', context)
 
 
 def delete_arquivo(request, pk):

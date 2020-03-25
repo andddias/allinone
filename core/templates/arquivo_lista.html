@@ -2,6 +2,7 @@
 {% block content %}
 
     {% block content_cabecalho %}
+        <h1>CNAB Bradesco</h1>
         <h2>Listagem todos Arquivos enviados</h2>
         <p>
             <a href="{% url 'upload' %}" class="btn btn-primary">Upload Arquivos</a>
@@ -35,4 +36,6 @@
             {% endfor %}
         </tbody>
     </table>
+    {% block btn_processar %}
+    {% endblock %}
 {% endblock %}

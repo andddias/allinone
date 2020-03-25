@@ -1,6 +1,9 @@
+from allinone.settings import BASE_DIR
 from decimal import Decimal
-import os
+import os.path
 import csv
+
+PASTA_RETORNO = '/media/arquivos/retorno/'
 
 banco = '237'
 convenio_oab_rr = '5146161'
@@ -34,16 +37,20 @@ def apenas_duas_casas_decimais(vr_ignorar):
     return truncado
 
 
-# lista que receberá todos os dados ao final da execução de cada arquivo
-lista_final = []
+# listas que receberão todos os dados ao final da execução de cada arquivo
+lista_retorno_cnab = []
+datas_oab_rr = []
+datas_oab_rn = []
+lista_titulos_convenio5146_cfoab = []
+lista_titulos_convenio5147_fida = []
+lista_titulos_convenio7926_cfoab = []
+lista_titulos_convenio7927_fida = []
 
 linhas_arquivo = None
-pasta = 'import'
-# pasta = input('Digite o local dos arquivos: ')
-# lista_de_arquivos = os.listdir(pasta)
 
 
 def lista_dados(lista_de_arquivos):
+    lista_final = []
     for arquivo_cnab in lista_de_arquivos:
         with open(arquivo_cnab) as file:
             primeira_linha = file.readline()
@@ -199,76 +206,84 @@ def lista_dados(lista_de_arquivos):
     return lista_final
 
 
-# print(lista_final)
-"""
-arquivo = 'retorno/tabela.csv'
-with open(arquivo, 'w', newline='') as arquivo_csv:
-    escritor = csv.writer(arquivo_csv, delimiter=';')
-    escritor.writerow(('CONTA', 'DATA', 'SECCIONAL', 'VALOR'))
-    for item in lista_final:
-        # Convertendo valor para string
-        valor_str = str(item[3])
-        # Substituindo ponto por virgula
-        valor_str = valor_str.replace('.', ',')
-        # Criando tupla a ser escrita, já que tuplas de origem não pode ser manipulada
-        tupla_escrita = (item[0], item[1], item[2], valor_str)
-        escritor.writerow(tupla_escrita)
+def tabela_dados_csv(lista_final):
+    datas_oab_rr.clear()
+    datas_oab_rn.clear()
+    lista_titulos_convenio5146_cfoab.clear()
+    lista_titulos_convenio5147_fida.clear()
+    lista_titulos_convenio7926_cfoab.clear()
+    lista_titulos_convenio7927_fida.clear()
 
-datas_oab_rr = []
-datas_oab_rn = []
-lista_titulos_convenio5146_cfoab = []
-lista_titulos_convenio5147_fida = []
-lista_titulos_convenio7926_cfoab = []
-lista_titulos_convenio7927_fida = []
-for conta, data, seccional, valor in lista_final:
-    if seccional == 'OAB/RR' and conta == 'CFOAB':
-        # Removendo formatação data de credito
-        data = data[0:2] + data[3:5] + data[6:10]
-        # Calculando valor ref 10% a lançar no cnab e convertendo em string
-        valor = int(((valor * 100) / 10) * 100)
-        valor = str(valor)
-        dados = (data, valor)
-        lista_titulos_convenio5146_cfoab.append(dados)
-        # Criando lista de datas para calcular maior e menor
-        data = int(data)
-        datas_oab_rr.append(data)
-    elif seccional == 'OAB/RR' and conta == 'FIDA':
-        # Removendo formatação data de credito
-        data = data[0:2] + data[3:5] + data[6:10]
-        # Calculando valor ref 2% a lançar no cnab e convertendo em string
-        valor = int(((valor * 100) / 2) * 100)
-        valor = str(valor)
-        dados = (data, valor)
-        lista_titulos_convenio5147_fida.append(dados)
-    elif seccional == 'OAB/RN' and conta == 'CFOAB':
-        # Removendo formatação data de credito
-        data = data[0:2] + data[3:5] + data[6:10]
-        # Calculando valor ref 10% a lançar no cnab e convertendo em string
-        valor = int(((valor * 100) / 10) * 100)
-        valor = str(valor)
-        dados = (data, valor)
-        lista_titulos_convenio7926_cfoab.append(dados)
-        # Criando lista de datas para calcular maior e menor
-        data = int(data)
-        datas_oab_rn.append(data)
-    elif seccional == 'OAB/RN' and conta == 'FIDA':
-        # Removendo formatação data de credito
-        data = data[0:2] + data[3:5] + data[6:10]
-        # Calculando valor ref 2% a lançar no cnab e convertendo em string
-        valor = int(((valor * 100) / 2) * 100)
-        valor = str(valor)
-        dados = (data, valor)
-        lista_titulos_convenio7927_fida.append(dados)
-"""
+    if not os.path.exists(BASE_DIR + PASTA_RETORNO):
+        os.mkdir(BASE_DIR + PASTA_RETORNO)
+
+    arquivo = BASE_DIR + PASTA_RETORNO + 'tabela.csv'
+    with open(arquivo, 'w', newline='') as arquivo_csv:
+        escritor = csv.writer(arquivo_csv, delimiter=';')
+        escritor.writerow(('CONTA', 'DATA', 'SECCIONAL', 'VALOR'))
+        for item in lista_final:
+            # Convertendo valor para string
+            valor_str = str(item[3])
+            # Substituindo ponto por virgula
+            valor_str = valor_str.replace('.', ',')
+            # Criando tupla a ser escrita, já que tuplas de origem não pode ser manipulada
+            tupla_escrita = (item[0], item[1], item[2], valor_str)
+            escritor.writerow(tupla_escrita)
+
+    for conta, data, seccional, valor in lista_final:
+        if seccional == 'OAB/RR' and conta == 'CFOAB':
+            # Removendo formatação data de credito
+            data = data[0:2] + data[3:5] + data[6:10]
+            # Calculando valor ref 10% a lançar no cnab e convertendo em string
+            valor = int(((valor * 100) / 10) * 100)
+            valor = str(valor)
+            dados = (data, valor)
+            lista_titulos_convenio5146_cfoab.append(dados)
+            # Criando lista de datas para calcular maior e menor
+            data = int(data)
+            datas_oab_rr.append(data)
+        elif seccional == 'OAB/RR' and conta == 'FIDA':
+            # Removendo formatação data de credito
+            data = data[0:2] + data[3:5] + data[6:10]
+            # Calculando valor ref 2% a lançar no cnab e convertendo em string
+            valor = int(((valor * 100) / 2) * 100)
+            valor = str(valor)
+            dados = (data, valor)
+            lista_titulos_convenio5147_fida.append(dados)
+        elif seccional == 'OAB/RN' and conta == 'CFOAB':
+            # Removendo formatação data de credito
+            data = data[0:2] + data[3:5] + data[6:10]
+            # Calculando valor ref 10% a lançar no cnab e convertendo em string
+            valor = int(((valor * 100) / 10) * 100)
+            valor = str(valor)
+            dados = (data, valor)
+            lista_titulos_convenio7926_cfoab.append(dados)
+            # Criando lista de datas para calcular maior e menor
+            data = int(data)
+            datas_oab_rn.append(data)
+        elif seccional == 'OAB/RN' and conta == 'FIDA':
+            # Removendo formatação data de credito
+            data = data[0:2] + data[3:5] + data[6:10]
+            # Calculando valor ref 2% a lançar no cnab e convertendo em string
+            valor = int(((valor * 100) / 2) * 100)
+            valor = str(valor)
+            dados = (data, valor)
+            lista_titulos_convenio7927_fida.append(dados)
+    return PASTA_RETORNO + 'tabela.csv'
 
 
-def criar_arquivo_cnab(nome_seccional, convenio, data_inicial, data_final, lista_dados):
+def criar_arquivo_cnab(nome_seccional, convenio, data_inicial, data_final, lista_dados_reg):
     # adicionando 0 a esquerda para completar 8 digitos
     data_inicial = (str(data_inicial)).zfill(8)
     data_final = (str(data_final)).zfill(8)
 
-    cnab = f'retorno/{nome_seccional}-{convenio}_{data_inicial}_a_{data_final}.ret'
-    with open(cnab, 'w') as cnab:
+    cnab = f'{PASTA_RETORNO}{nome_seccional}-{convenio}_{data_inicial}_a_{data_final}.ret'
+    lista_retorno_cnab.append(cnab)
+
+    if not os.path.exists(BASE_DIR + PASTA_RETORNO):
+        os.mkdir(BASE_DIR + PASTA_RETORNO)
+
+    with open(BASE_DIR + cnab, 'w') as cnab:
         cnab.write(
             f'23700000         2084510640001100000000000000{convenio}97102173300000001086855ORDEM DOS ADVOGADOS'
             ' DO BRASILSBRADESCO                                20301202004171800049908301600           '
@@ -276,7 +291,7 @@ def criar_arquivo_cnab(nome_seccional, convenio, data_inicial, data_final, lista
         cnab.write('23700011T01  042 20084510640001100000000000000792697102173300000001086855ORDEM DOS ADVOGADO'
                       'S DO BRASILS                                                                               '
                       ' 000004990201202003012020                                 \n')
-        for data_cred, valor_cred in lista_dados:
+        for data_cred, valor_cred in lista_dados_reg:
             # adicionando 0 a esquerda para completar 15 digitos
             valor_cred = valor_cred.zfill(15)
 
@@ -295,38 +310,39 @@ def criar_arquivo_cnab(nome_seccional, convenio, data_inicial, data_final, lista
                       '                                                                                           '
                       '                                                          ')
 
-"""
-if len(lista_titulos_convenio5146_cfoab) > 0:
-    nome = 'OABRR'
-    cod = '5146'
-    data_ini = min(datas_oab_rr)
-    data_fin = max(datas_oab_rr)
-    criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio5146_cfoab)
-    print(lista_titulos_convenio5146_cfoab)
 
-if len(lista_titulos_convenio5147_fida) > 0:
-    nome = 'OABRR'
-    cod = '5147'
-    data_ini = min(datas_oab_rr)
-    data_fin = max(datas_oab_rr)
-    criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio5147_fida)
-    print(lista_titulos_convenio5147_fida)
+def filtra_geracao_cnab():
+    lista_retorno_cnab.clear()
 
-if len(lista_titulos_convenio7926_cfoab) > 0:
-    nome = 'OABRN'
-    cod = '7926'
-    data_ini = min(datas_oab_rn)
-    data_fin = max(datas_oab_rn)
-    criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio7926_cfoab)
-    print(lista_titulos_convenio7926_cfoab)
+    if len(lista_titulos_convenio5146_cfoab) > 0:
+        nome = 'OABRR'
+        cod = '5146'
+        data_ini = min(datas_oab_rr)
+        data_fin = max(datas_oab_rr)
+        criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio5146_cfoab)
+        print(lista_titulos_convenio5146_cfoab)
 
-if len(lista_titulos_convenio7927_fida) > 0:
-    nome = 'OABRN'
-    cod = '7927'
-    data_ini = min(datas_oab_rn)
-    data_fin = max(datas_oab_rn)
-    criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio7927_fida)
-    print(lista_titulos_convenio7927_fida)
+    if len(lista_titulos_convenio5147_fida) > 0:
+        nome = 'OABRR'
+        cod = '5147'
+        data_ini = min(datas_oab_rr)
+        data_fin = max(datas_oab_rr)
+        criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio5147_fida)
+        print(lista_titulos_convenio5147_fida)
 
-print(f'O arquivo retorno com os dados dos arquivos foi criado no seguinte local: {arquivo}')
-"""
+    if len(lista_titulos_convenio7926_cfoab) > 0:
+        nome = 'OABRN'
+        cod = '7926'
+        data_ini = min(datas_oab_rn)
+        data_fin = max(datas_oab_rn)
+        criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio7926_cfoab)
+        print(lista_titulos_convenio7926_cfoab)
+
+    if len(lista_titulos_convenio7927_fida) > 0:
+        nome = 'OABRN'
+        cod = '7927'
+        data_ini = min(datas_oab_rn)
+        data_fin = max(datas_oab_rn)
+        criar_arquivo_cnab(nome, cod, data_ini, data_fin, lista_titulos_convenio7927_fida)
+        print(lista_titulos_convenio7927_fida)
+    return lista_retorno_cnab
