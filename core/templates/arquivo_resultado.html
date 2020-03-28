@@ -16,17 +16,17 @@
         <tbody>
             {% if tabela_csv %}
                 <tr>
-                    <td>{{ tabela_csv }}</td>
+                    <td>{{ tabela_csv|slice:'24:' }}</td>
                     <td>
-                        <a href="{{ tabela_csv }}" class="btn btn-primary btn-sm" target="_blank">Download</a>
+                        <a href="{{ tabela_csv }}" class="btn btn-primary btn-sm" download>Download</a>
                     </td>
                 </tr>
             {% endif %}
             {% for arquivo in lista_cnab %}
                 <tr>
-                    <td>{{ arquivo }}</td>
+                    <td>{{ arquivo|slice:"24:" }}</td>
                     <td>
-                        <a href="{{ arquivo }}" class="btn btn-primary btn-sm" target="_blank">Download</a>
+                        <a href="{{ arquivo }}" class="btn btn-primary btn-sm" download>Download</a>
                     </td>
                 </tr>
             {% endfor %}

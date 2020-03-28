@@ -110,8 +110,19 @@ def arquivo_lista_last(request):
         arquivos = None
     context = {
         'arquivos': arquivos,
+        'row1': 'row1',
+        'row2': 'row2',
     }
     return render(request, 'arquivo_lista_last.html', context)
+
+
+def update_variable(value):
+    if value:
+        value = False
+        return value
+    else:
+        value = True
+        return value
 
 
 @login_required
@@ -126,10 +137,6 @@ def processamento_arquivo(request):
     lista = lista_dados(endereco_arq)
     tabela_csv = tabela_dados_csv(lista)
     lista_arq_cnab = filtra_geracao_cnab()
-
-    print(lista)
-    print(tabela_csv)
-    print(lista_arq_cnab)
 
     context = {
         'tabela_csv': tabela_csv,

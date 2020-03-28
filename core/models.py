@@ -12,6 +12,11 @@ class Arquivo(models.Model):
         self.arquivo.delete()
         super().delete(*args, **kwargs)
 
+    def nome_arquivo(self):
+        nome = str(self.arquivo).split('/')
+        # Retorna somente o nome do arquivo
+        return nome[-1]
+
 
 # Exemplo de Model gravando no banco de dados link do arquivo permitira CRUD
 class Livro(models.Model):
