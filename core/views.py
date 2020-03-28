@@ -1,5 +1,6 @@
 from allinone.settings import BASE_DIR
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView, CreateView
@@ -94,21 +95,26 @@ class UploadArquivoView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 
-class ArquivoListView(ListView):
+class ArquivoListView(LoginRequiredMixin, ListView):
     model = Arquivo
     template_name = 'arquivo_lista.html'
     context_object_name = 'arquivos'
 
 
+@login_required
 def arquivo_lista_last(request):
-    data = Arquivo.objects.last().data_upload
-    arquivos = Arquivo.objects.filter(data_upload=data)
+    try:
+        data = Arquivo.objects.last().data_upload
+        arquivos = Arquivo.objects.filter(data_upload=data)
+    except AttributeError:
+        arquivos = None
     context = {
         'arquivos': arquivos,
     }
     return render(request, 'arquivo_lista_last.html', context)
 
 
+@login_required
 def processamento_arquivo(request):
     data = Arquivo.objects.last().data_upload
     arquivos = Arquivo.objects.filter(data_upload=data)
@@ -132,6 +138,7 @@ def processamento_arquivo(request):
     return render(request, 'arquivo_resultado.html', context)
 
 
+@login_required
 def delete_arquivo(request, pk):
     if request.method == 'POST':
         arquivo = Arquivo.objects.get(pk=pk)

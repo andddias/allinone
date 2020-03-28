@@ -9,7 +9,10 @@
     {% endblock %}
 
     {% block btn_processar %}
+        <!--Só apresentará botão de processamento caso exista arquivos-->
+        {% if arquivos %}
         <p>
             <a href="{% url 'resultado' %}" class="btn btn-danger btn-sm">Processar</a>
         </p>
+        {% endif %}
     {% endblock %}
