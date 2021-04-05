@@ -26,7 +26,7 @@ SECRET_KEY = '(z)6f4vx#c%^&rk9r(gm++5zbt4w0+448vranw0w^i+ezhltx('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['proj-sistema.herokuapp.com']
+ALLOWED_HOSTS = ['proj-sistema.herokuapp.com', '*']
 
 
 # Application definition
@@ -146,3 +146,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
+
+# Expiração da Sessão navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# 2horas de sessão ativa
+SESSION_COOKIE_AGE = 7200
